@@ -1,7 +1,7 @@
 /*
-1-2: First Program—Display a Picture  16
-Second Program—AVI Video  18
-Moving Around  19
+1: First Program—Display a Picture  16
+2: Second Program—AVI Video  18
+3: Moving Around  19
 A Simple Transformation  22
 A Not-So-Simple Transformation  24
 Input from a Camera  26
@@ -10,7 +10,6 @@ Onward  29
 Exercises  29
 */
 // 1读取图片----------------------------------------------------------------------------------------
-#include"stdafx.h"
 #include<iostream>
 
 #include<highgui.h>
