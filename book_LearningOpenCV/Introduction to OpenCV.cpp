@@ -59,9 +59,10 @@ int main()
 #include<highgui.h>
 #include<cv.h>
 
+//进度条位置
 int g_slider_position = 0;
+//callback需要使用捕获到的对象，所以先建立这个全局变量g_capture
 CvCapture* g_capture = NULL;
-
 void onTrackbarSlide(int pos) {
 	cvSetCaptureProperty(g_capture, CV_CAP_PROP_POS_FRAMES, pos);
 }
@@ -70,20 +71,23 @@ int main()
 {
 	cvNamedWindow("example3", CV_WINDOW_AUTOSIZE);
 	g_capture = cvCreateFileCapture("harmony.avi");
+	//得到视频一共有多少帧
 	int frames = (int)cvGetCaptureProperty(g_capture, CV_CAP_PROP_FRAME_COUNT);
+	//有时候无法得到视频帧数，所以这时候不显示进度条
 	if (frames != 0) {
+		//给进度条一个标签，也就是名字position；指定进度条所在窗口为example3；绑定进度条的位置；进度条最大值；callback
 		cvCreateTrackbar("position", "example3", &g_slider_position, frames, onTrackbarSlide);
 	}
 	IplImage* frame;
 	while (1) {
 		frame = cvQueryFrame(g_capture);
 		if (!frame)break;
-		cvShowImage("example2", frame);
+		cvShowImage("example3", frame);
 		char c = cvWaitKey(33);
 		if (c == 27)break;
 	}
 	cvReleaseCapture(&g_capture);
-	cvDestroyWindow("example2");
+	cvDestroyWindow("example3");
 
 	return 0;
 }
