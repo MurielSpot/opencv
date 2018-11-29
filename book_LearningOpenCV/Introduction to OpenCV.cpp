@@ -16,12 +16,17 @@ Exercises  29
 using namespace cv;
 int main()
 {
-		
+	//载入一张图片，返回指针
 	IplImage* img = cvLoadImage("em.jpg");
+	//建立一个名字为example1的窗口，窗口大小根据内容缩放
 	cvNamedWindow("example1", CV_WINDOW_AUTOSIZE);
+	//在已经建立的窗口里显示图片
 	cvShowImage("example1", img);
+	//无限等待键盘输入
 	cvWaitKey(0);
+	//释放图片内存
 	cvReleaseImage(&img);
+	//释放所有内存
 	cvDestroyWindow("example1");
 	return 0;
 }
