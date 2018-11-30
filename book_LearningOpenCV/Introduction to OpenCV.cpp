@@ -1,13 +1,10 @@
 /*
 1: First Program—Display a Picture  16
 2: Second Program—AVI Video  18
-3: Moving Around  19
-A Simple Transformation  22
-A Not-So-Simple Transformation  24
-Input from a Camera  26
-Writing to an AVI File  27
-Onward  29
-Exercises  29
+3: Moving Around滚动条  19
+4: 在图片上画矩形
+5:
+6:
 */
 // 1读取图片----------------------------------------------------------------------------------------
 //#include "stdafx.h"
@@ -92,7 +89,81 @@ int main()
 	return 0;
 }
 
-// 4----------------------------------------------------------------------------------------
+// 4在图片上画矩形----------------------------------------------------------------------------------------
+#include "stdafx.h"
+#include<iostream>
+#include<highgui.h>
+#include<cv.h>
+
+int g_slider_position = 0;
+CvCapture* g_capture = NULL;
+
+void onTrackbarSlide(int pos) {
+	cvSetCaptureProperty(g_capture, CV_CAP_PROP_POS_FRAMES, pos);
+}
+
+void my_mouse_callback(int event,int x,int y,int flags,void* param);
+
+CvRect box;
+bool drawing_box = false;
+
+void draw_box(IplImage* img, CvRect rect) {
+	cvRectangle(img, cvPoint(box.x, box.y), cvPoint(box.x + box.width, box.y + box.height), cvScalar(0xff, 0x00, 0x00));
+}
+
+
+int main()
+{
+	IplImage* image = cvLoadImage("em.jpg");
+	IplImage* temp = cvCloneImage(image);
+	cvNamedWindow("Box example");
+
+	cvSetMouseCallback("Box example", my_mouse_callback, (void*)image);
+	while (1) {
+		cvCopy(image, temp);
+		//cvCopyImage(image, temp);
+		if (drawing_box)draw_box(temp, box);
+		cvShowImage("Box example", temp);
+
+		if (cvWaitKey(15) == 27)break;
+	}
+	cvReleaseImage(&image);
+	cvReleaseImage(&temp);
+	cvDestroyWindow("Box example");
+
+	return 0;
+}
+void my_mouse_callback(int event, int x, int y, int flags, void* param) {
+	IplImage* image = (IplImage*)param;
+	switch (event)
+	{
+		case CV_EVENT_MOUSEMOVE: {
+			if (drawing_box) {
+				box.width = x - box.x;
+				box.height = y - box.y;
+			}
+		}
+		break;
+		case CV_EVENT_LBUTTONDOWN: {
+			drawing_box = true;
+			box = CvRect(x, y, 0, 0);
+		}
+		break;
+		case CV_EVENT_LBUTTONUP: {
+			drawing_box = false;
+			if (box.width < 0) {
+				box.x += box.height;
+				box.x *= -1;
+			}
+			if (box.height < 0) {
+				box.y += box.height;
+				box.height *= -1;
+			}
+			draw_box(image, box);
+		}
+		break;
+	}
+}
 
 // 5----------------------------------------------------------------------------------------
 
